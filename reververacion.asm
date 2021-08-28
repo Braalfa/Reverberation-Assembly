@@ -8,10 +8,9 @@ global  _start
  
 _start:
 
-    mov r8, 0000_0001_1000_0000b
-    mov r9, 0000_0011_0100_0000b
-    call addition
-    call multiplication_float
+    mov r9, 0000_0001_1000_0000b
+    mov r8, 0000_0011_0100_0000b
+    call division_float
     jmp end        
 
 addition:
@@ -104,6 +103,18 @@ multiplication:
     mov r15d, eax
     
     pop rax
+    ret
+
+division_float: 
+
+    push rax
+    
+    mov eax, r8d  
+    div r9      
+    mov r15, rax
+    
+    pop rax
+    
     ret
 
 end: 

@@ -1,12 +1,35 @@
 SECTION .data
-    input dw 0000_0000_0000_0000b 
-    output times 10 dw 0  ; the contents to write
+    input dw 0000_0000_0000_0000b, 0h
+    output times 121000 dw 0, 0h  ; the contents to write
 
-    outputfilename db 'output.txt', 0h    ; the filename to create
-    inputfilename db 'myfile', 0h    ; the filename to create
+    outputfilename db 'output.wav', 0h    ; the filename to create
+    inputfilename db 'song.wav', 0h    ; the filename to create
 
 
 SECTION .text
+
+
+copyheaders:
+    push r14
+    push r12
+    push r8
+
+    mov r14, 0
+    mov r12, 0
+headersloop:
+    call loadinputword
+    mov r8, [input]
+    mov [output], r8
+    call saveoutputword
+
+    add r14, 2
+    cmp r14, 44
+    jl headersloop
+
+    pop r8
+    pop r12
+    pop r14
+    ret
 
 loadinputword:
     push rdx
@@ -55,7 +78,7 @@ createoutputfile:
     int     80h                 ; call the kernel
     
     call closefile
-    
+        
     pop rax
     pop rbx
     pop rcx
@@ -79,19 +102,14 @@ updatefileposition:
     ret
 
 readinput:
-    mov     edx, 1             ; number of bytes to read - one for each letter of the file contents
-    mov     ecx, input          ; move the memory address of our file contents variable into ecx
-    add     ecx, 1
-    mov     ebx, ebx            ; move the opened file descriptor into EBX
-    mov     eax, 3              ; invoke SYS_READ (kernel opcode 3)
-    int     80h                 ; call the kernel
-
-    mov     edx, 1             ; number of bytes to read - one for each letter of the file contents
+    mov     edx, 2             ; number of bytes to read - one for each letter of the file contents
     mov     ecx, input          ; move the memory address of our file contents variable into ecx
     mov     ebx, ebx            ; move the opened file descriptor into EBX
     mov     eax, 3              ; invoke SYS_READ (kernel opcode 3)
     int     80h                 ; call the kernel
-
+    
+    cmp     eax, 0
+    je      end
     ret
 
 openoutput: 
@@ -102,21 +120,12 @@ openoutput:
     ret
 
 write:
-    mov     edx, 1
-    mov     ecx, output
-    add     ecx, r12d
-    add     ecx, 1
-    mov     ebx, ebx            ; move the file descriptor of the file we created into ebx
-    mov     eax, 4              ; invoke SYS_WRITE (kernel opcode 4)
-    int     80h                 ; call the kernel
-
-    mov     edx, 1
+    mov     edx, 2
     mov     ecx, output
     add     ecx, r12d
     mov     ebx, ebx            ; move the file descriptor of the file we created into ebx
     mov     eax, 4              ; invoke SYS_WRITE (kernel opcode 4)
     int     80h                 ; call the kernel
-
     ret 
 
 closefile:
@@ -124,3 +133,9 @@ closefile:
     mov     eax, 6              ; invoke SYS_CLOSE (kernel opcode 6)
     int     80h                 ; call the kernel
     ret
+
+end: 
+
+    mov     ebx, 0
+    mov     eax, 1
+    int     80h

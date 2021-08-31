@@ -3,7 +3,7 @@
 %include        'filehandler.asm'                             ; include our external file
 
 SECTION .data
-    alpha: dw 0000_0000_1000_0000b
+    alpha: dw 0000_0000_0000_0001b
     kk: dw 4
 
 SECTION .text
@@ -12,11 +12,12 @@ global  _start
 _start:
 
     call createoutputfile
-
+    ;call copyheaders
 
     mov r14, 0
     mov r12, 0
     mov r13, 0
+
 
 fillbuffer:
     call loadinputword ; se carga el input
@@ -32,12 +33,12 @@ fillbuffer:
 
 reverb:
     call loadinputword ; se carga el input
-    mov r8, 0 
+    mov r8, 2112 
     mov r9, 0 
     mov r9d, [input]
 f:
-    cmp r8, [input]
-    je end  ; si el input es 0 entonces se termina
+   ; cmp r8, [input]
+   ; je end  ; si el input es 0 entonces se termina
 
     mov r8d, 0000_0001_0000_0000b
     mov r9d, [alpha]
@@ -74,9 +75,3 @@ skip1:
     mov r12, 0 
 skip2:
     ret
-
-end: 
-
-    mov     ebx, 0
-    mov     eax, 1
-    int     80h

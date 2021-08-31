@@ -8,6 +8,29 @@ SECTION .data
 
 SECTION .text
 
+
+copyheaders:
+    push r14
+    push r12
+    push r8
+
+    mov r14, 0
+    mov r12, 0
+headersloop:
+    call loadinputword
+    mov r8, [input]
+    mov [output], r8
+    call saveoutputword
+
+    add r14, 2
+    cmp r14, 44
+    jl headersloop
+
+    pop r8
+    pop r12
+    pop r14
+    ret
+
 loadinputword:
     push rdx
     push rcx
@@ -55,7 +78,7 @@ createoutputfile:
     int     80h                 ; call the kernel
     
     call closefile
-    
+        
     pop rax
     pop rbx
     pop rcx
@@ -86,12 +109,17 @@ readinput:
     mov     eax, 3              ; invoke SYS_READ (kernel opcode 3)
     int     80h                 ; call the kernel
 
+    cmp     eax, 0
+    je      end
+
     mov     edx, 1             ; number of bytes to read - one for each letter of the file contents
     mov     ecx, input          ; move the memory address of our file contents variable into ecx
     mov     ebx, ebx            ; move the opened file descriptor into EBX
     mov     eax, 3              ; invoke SYS_READ (kernel opcode 3)
     int     80h                 ; call the kernel
-
+    
+    cmp     eax, 0
+    je      end
     ret
 
 openoutput: 
@@ -124,3 +152,9 @@ closefile:
     mov     eax, 6              ; invoke SYS_CLOSE (kernel opcode 6)
     int     80h                 ; call the kernel
     ret
+
+end: 
+
+    mov     ebx, 0
+    mov     eax, 1
+    int     80h

@@ -1,9 +1,9 @@
 SECTION .data
-    input dw 0000_0000_0000_0000b 
-    output times 10 dw 0  ; the contents to write
+    input dw 0000_0000_0000_0000b, 0h
+    output times 121000 dw 0, 0h  ; the contents to write
 
-    outputfilename db 'output.txt', 0h    ; the filename to create
-    inputfilename db 'myfile', 0h    ; the filename to create
+    outputfilename db 'output.wav', 0h    ; the filename to create
+    inputfilename db 'song.wav', 0h    ; the filename to create
 
 
 SECTION .text
@@ -102,17 +102,7 @@ updatefileposition:
     ret
 
 readinput:
-    mov     edx, 1             ; number of bytes to read - one for each letter of the file contents
-    mov     ecx, input          ; move the memory address of our file contents variable into ecx
-    add     ecx, 1
-    mov     ebx, ebx            ; move the opened file descriptor into EBX
-    mov     eax, 3              ; invoke SYS_READ (kernel opcode 3)
-    int     80h                 ; call the kernel
-
-    cmp     eax, 0
-    je      end
-
-    mov     edx, 1             ; number of bytes to read - one for each letter of the file contents
+    mov     edx, 2             ; number of bytes to read - one for each letter of the file contents
     mov     ecx, input          ; move the memory address of our file contents variable into ecx
     mov     ebx, ebx            ; move the opened file descriptor into EBX
     mov     eax, 3              ; invoke SYS_READ (kernel opcode 3)
@@ -130,21 +120,12 @@ openoutput:
     ret
 
 write:
-    mov     edx, 1
-    mov     ecx, output
-    add     ecx, r12d
-    add     ecx, 1
-    mov     ebx, ebx            ; move the file descriptor of the file we created into ebx
-    mov     eax, 4              ; invoke SYS_WRITE (kernel opcode 4)
-    int     80h                 ; call the kernel
-
-    mov     edx, 1
+    mov     edx, 2
     mov     ecx, output
     add     ecx, r12d
     mov     ebx, ebx            ; move the file descriptor of the file we created into ebx
     mov     eax, 4              ; invoke SYS_WRITE (kernel opcode 4)
     int     80h                 ; call the kernel
-
     ret 
 
 closefile:

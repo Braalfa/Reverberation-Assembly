@@ -2,9 +2,9 @@
 %include        'math.asm'                             ; include our external file
 %include        'filehandler.asm'                             ; include our external file
 
-SECTION .data
-    alpha: dw 0000_0000_0000_0001b
-    kk: dw 4
+SECTION .data 
+    alpha: dw 0000_0000_1001_1001b, 0h
+    kk: dw 60000, 0h
 
 SECTION .text
 global  _start
@@ -12,9 +12,9 @@ global  _start
 _start:
 
     call createoutputfile
-    ;call copyheaders
+    call copyheaders
 
-    mov r14, 0
+    mov r14, 44
     mov r12, 0
     mov r13, 0
 
@@ -35,11 +35,8 @@ reverb:
     call loadinputword ; se carga el input
     mov r8, 2112 
     mov r9, 0 
-    mov r9d, [input]
 f:
-   ; cmp r8, [input]
-   ; je end  ; si el input es 0 entonces se termina
-
+    mov r8, 0
     mov r8d, 0000_0001_0000_0000b
     mov r9d, [alpha]
     call substraction

@@ -1,18 +1,29 @@
 SECTION .data
 int_mask     dw   1111_1111_0000_0000b  
 float_mask   dw  0000_0000_1111_1111b
+mask     dw   1111_1111_1111_1111b, 0h
 
 SECTION .text
 
 addition:
+    and r8, [mask]
+    and r9, [mask]
+
     mov r15d, r8d
     add r15d, r9d
+
+    and r15, [mask]
     ret 
 
 
 substraction:
+    and r8, [mask]
+    and r9, [mask]
+    
     mov r15d, r8d
     sub r15d, r9d
+
+    and r15, [mask]
     ret 
 
 
@@ -27,7 +38,9 @@ multiplication:
     push rbx
     push rcx
     push rdx
-
+    
+    and r8, [mask]
+    and r9, [mask]
 
     mov r10d, r8d
     mov r11d, r8d
@@ -77,6 +90,7 @@ multiplication:
     add eax, edx
     
     mov r15d, eax
+    and r15, [mask]
 
     pop r9
     pop r8
@@ -95,9 +109,14 @@ multiplication:
 multiplication_aux:
     push rax
 
+    and r8, [mask]
+    and r9, [mask]
+
     mov eax, r8d
     mul r9d
     mov r15d, eax
+
+    and r15, [mask]
 
     pop rax
     ret
@@ -105,6 +124,9 @@ multiplication_aux:
 division: 
     push rax
     push rcx
+
+    and r8, [mask]
+    and r9, [mask]
 
     mov eax, r8d      
     mov r15d, 0
@@ -122,6 +144,8 @@ div2:
     mov r14d, eax
     shr r14d, 24
     add r15d, r14d
+
+    and r15, [mask]
 
     pop rcx
     pop rax

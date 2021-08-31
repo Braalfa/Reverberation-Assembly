@@ -3,8 +3,8 @@
 %include        'filehandler.asm'                             ; include our external file
 
 SECTION .data 
-    alpha: dw 0000_0000_1001_0000b, 0h
-    kk: dw 5000, 0h
+    alpha: dw 0000_0000_0111_1111b, 0h
+    doublek: dw 5000, 0h
 
 SECTION .text
 global  _start
@@ -37,7 +37,7 @@ fillbuffer:
     add r14d, 2
     add r12d, 2
 
-    cmp r12d, [kk]
+    cmp r12d, [doublek]
     jl fillbuffer
 
 reverb:
@@ -73,12 +73,12 @@ reverb:
 
 updatebufferpointers:
     add r13d, 2
-    cmp r13d, [kk]
+    cmp r13d, [doublek]
     jbe skip1
     mov r13, 0 
 skip1:
     add r12d, 2
-    cmp r12d, [kk]
+    cmp r12d, [doublek]
     jbe skip2
     mov r12, 0 
 skip2:

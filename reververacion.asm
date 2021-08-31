@@ -11,6 +11,14 @@ global  _start
  
 _start:
     
+    ;mov r8, 0000_0011_0100_0000b
+    ;mov r9, 0000_0001_1000_0000b
+    ;call multiplication
+    ;jmp end
+    ;mov r8, 1111_1100_1100_0000b
+    ;mov r9, 0000_0001_1000_0000b
+    ;call multiplication2
+    ;jmp end
 
     call createoutputfile
     call copyheaders

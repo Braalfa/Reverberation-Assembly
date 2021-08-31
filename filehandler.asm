@@ -79,11 +79,19 @@ updatefileposition:
     ret
 
 readinput:
-    mov     edx, 2             ; number of bytes to read - one for each letter of the file contents
+    mov     edx, 1             ; number of bytes to read - one for each letter of the file contents
+    mov     ecx, input          ; move the memory address of our file contents variable into ecx
+    add     ecx, 1
+    mov     ebx, ebx            ; move the opened file descriptor into EBX
+    mov     eax, 3              ; invoke SYS_READ (kernel opcode 3)
+    int     80h                 ; call the kernel
+
+    mov     edx, 1             ; number of bytes to read - one for each letter of the file contents
     mov     ecx, input          ; move the memory address of our file contents variable into ecx
     mov     ebx, ebx            ; move the opened file descriptor into EBX
     mov     eax, 3              ; invoke SYS_READ (kernel opcode 3)
     int     80h                 ; call the kernel
+
     ret
 
 openoutput: 
@@ -94,12 +102,21 @@ openoutput:
     ret
 
 write:
-    mov     edx, 2
+    mov     edx, 1
+    mov     ecx, output
+    add     ecx, r12d
+    add     ecx, 1
+    mov     ebx, ebx            ; move the file descriptor of the file we created into ebx
+    mov     eax, 4              ; invoke SYS_WRITE (kernel opcode 4)
+    int     80h                 ; call the kernel
+
+    mov     edx, 1
     mov     ecx, output
     add     ecx, r12d
     mov     ebx, ebx            ; move the file descriptor of the file we created into ebx
     mov     eax, 4              ; invoke SYS_WRITE (kernel opcode 4)
     int     80h                 ; call the kernel
+
     ret 
 
 closefile:

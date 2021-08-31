@@ -44,25 +44,25 @@ reverb:
     call loadinputword ; se carga el input
     mov r8, 2112 
     mov r9, 0 
-f:
+
     mov r8, 0
     mov r8d, 0000_0001_0000_0000b
     mov r9d, [alpha]
     call substraction
-a:
+
     mov r8d, r15d    
     mov r9d, [input]
     call multiplication
     mov r10d, r15d
-b:
+
     mov r8d, [alpha]
     mov r9d, [output+r13d]
     call multiplication
-c:
+
     mov r8, r10
     mov r9, r15
     call addition
-d:
+
     mov [output+r12d], r15d
     call saveoutputword
 

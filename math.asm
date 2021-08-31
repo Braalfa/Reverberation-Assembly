@@ -66,23 +66,6 @@ substraction:
     and r15, [mask]
     ret 
 
-multiplication2:
-    push rax
-
-    and r8, [mask]
-    and r9, [mask]
-
-    mov eax, r8d
-    mul r9d
-    mov r15d, eax
-lol:
-    shr r15, 8
-    and r15, [mask]
-
-    pop rax
-    ret
-
-
 multiplication:
 
     push r10
@@ -112,18 +95,14 @@ multiplication:
 
     cmp r10, 0
     je invert9
-    mov r10, r8
-    mov r8, 0
-    sub r8, r10
+    neg r8
 
 invert9:
 
     cmp r11, 0
     je notinvertr9
-    mov r11, r9
-    mov r9, 0
-    sub r9, r11
-
+    neg r9
+    
 notinvertr9:
 
     and r8, [mask]
@@ -141,9 +120,6 @@ notinvertr9:
     and r13d, [float_mask]
     shr r12d, 8
     
-    push r8
-    push r9
-
     mov r8d, r10d
     mov r9d, r12d  
 
@@ -179,12 +155,8 @@ notinvertr9:
     mov r15d, eax
     and r15, [mask]
 
-    pop r9 ; se puede eliminar
-    pop r8 ; se puede eliminar
     pop r9
     pop r8
-
-    and r15, [mask]; se puede eliminar
 
     mov r10, r8
     mov r11, r9
@@ -196,10 +168,8 @@ notinvertr9:
 
     cmp r10, 0
     je notinvert
-    mov r10, r15
-    mov r15, 0
-    sub r15, r10
-
+    neg r15
+    
 notinvert:
 
     and r15, [mask]
@@ -225,8 +195,6 @@ multiplication_aux:
     mov eax, r8d
     mul r9d
     mov r15d, eax
-    
-
 
     and r15, [mask]
 

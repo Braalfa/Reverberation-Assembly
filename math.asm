@@ -1,20 +1,60 @@
 SECTION .data
-int_mask     dw   1111_1111_0000_0000b  
-float_mask   dw  0000_0000_1111_1111b
+sign_mask     dw   1000_0000_0000_0000b, 0h  
+int_mask     dw   0111_1111_0000_0000b, 0h
+float_mask   dw  0000_0000_1111_1111b, 0h
+max     dw   0111_1111_1111_1111b, 0h
+min     dw   1000_0000_0000_0000b, 0h
 mask     dw   1111_1111_1111_1111b, 0h
 
 SECTION .text
 
 addition:
+    push r10
+    push r11
+
     and r8, [mask]
     and r9, [mask]
 
-    mov r15d, r8d
-    add r15d, r9d
+    mov r10, r8
+    mov r11, r9
+
+    shl r10, 48
+    shl r11, 48
+
+    mov r15, r10
+    add r15, r11
+    
+
+    jo additionoverflow
+
+    shr r15, 48
+
+endaddition:
 
     and r15, [mask]
+    pop r11
+    pop r10
+
     ret 
 
+
+additionoverflow:
+
+    mov r10, r8
+    and r10, [sign_mask]
+
+    cmp r10, 0
+    
+    je positiveoverflow
+    jmp negativeoverflow
+
+positiveoverflow:
+    mov r15, [max]
+    jmp endaddition 
+
+negativeoverflow:
+    mov r15, [min]
+    jmp endaddition 
 
 substraction:
     and r8, [mask]
@@ -94,6 +134,23 @@ multiplication:
 
     pop r9
     pop r8
+
+    cmp r15, 0
+    je endmultiplication
+
+    mov r10, r8
+    mov r11, r9
+
+    and r10, [sign_mask]
+    and r11, [sign_mask]
+    xor r10, r11
+
+    add r15, r10
+
+endmultiplication:
+
+    and r15, [mask]
+
     pop rdx
     pop rcx
     pop rbx

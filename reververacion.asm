@@ -11,22 +11,30 @@ SECTION .text
 global  _start
  
 _start:
-    
-    ;mov r8, 0000_0011_0100_0000b
-    ;mov r9, 0000_0001_1000_0000b
-    ;call multiplication
-    ;jmp end
-    ;mov r8, 1111_1100_1100_0000b
-    ;mov r9, 0000_0001_1000_0000b
-    ;call multiplication2
-    ;jmp end
 
+
+reverbexecution:
     call createoutputfile
     call copyheaders
+    call initializeregisters
+    call fillbuffer
+    call reverb
 
+
+reberbinverseexecution:
+    call switchfile
+    call createoutputfile
+    call copyheaders
+    call initializeregisters
+    call fillbuffer
+    call reverbreduction
+    jmp end
+
+initializeregisters:
     mov r14, 44
     mov r12, 0
     mov r13, 0
+    ret
 
 
 fillbuffer:
@@ -41,11 +49,12 @@ fillbuffer:
 
     cmp r12d, [doublek]
     jl fillbuffer
-
-jmp reverbreduction
+    ret
 
 reverb:
     call loadinputword ; se carga el input
+    cmp     r15, 0
+    je     return 
 
     mov r8d, 0000_0001_0000_0000b
     mov r9d, [alpha]
@@ -75,23 +84,24 @@ reverb:
 
 reverbreduction:
     call loadinputword ; se carga el input
-    mov r8, [mask]
-a:
+    cmp     r15, 0
+    je     return 
+
     mov r8d, [alpha]
     neg r8d
     mov r9d, [buffer+r13d]
     call multiplication
-b:
+
     mov r8d, [input]
     and r8d, [mask]
     mov [buffer+r12d], r8d
     mov r9d, r15d
     call addition
-c:
+
     mov r8d, [alpha_inv]
     mov r9d, r15d
     call multiplication
-d:
+
     mov [output], r15d
     call saveoutputword
     call updatebufferpointers
@@ -112,3 +122,12 @@ skip1:
     mov r12, 0 
 skip2:
     ret
+
+return:
+    ret
+
+end: 
+
+    mov     ebx, 0
+    mov     eax, 1
+    int     80h

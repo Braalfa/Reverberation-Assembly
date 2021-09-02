@@ -4,12 +4,22 @@ SECTION .data
 
     buffer times 121000 dw 0, 0h  ; the contents to write
 
-    outputfilename db 'output2.wav', 0h    ; the filename to create
-    inputfilename db 'output.wav', 0h    ; the filename to create
+    outputfilename db 'output1.wav', 0h    ; the filename to create
+    inputfilename db 'input1.wav', 0h    ; the filename to create
+    outputfilename2 db 'output2.wav', 0h    ; the filename to create
+    inputfilename2 db 'input2.wav', 0h    ; the filename to create
 
 
 SECTION .text
 
+switchfile:
+    push r8
+    mov r8, [inputfilename2]
+    mov [inputfilename], r8
+    mov r8, [outputfilename2]
+    mov [outputfilename], r8
+    pop r8
+    ret
 
 copyheaders:
     push r14
@@ -42,13 +52,22 @@ loadinputword:
     call openinput
     call updatefileposition
     call readinput
+    
+    mov r15, 1
+    
+    cmp     eax, 0
+    jne     continue 
+    mov r15, 0
+    
+continue:
+
+
     call closefile
     
     pop rax
     pop rbx
     pop rcx
     pop rdx
-
     ret
 
 saveoutputword:
@@ -109,9 +128,7 @@ readinput:
     mov     ebx, ebx            ; move the opened file descriptor into EBX
     mov     eax, 3              ; invoke SYS_READ (kernel opcode 3)
     int     80h                 ; call the kernel
-    
-    cmp     eax, 0
-    je      end
+
     ret
 
 openoutput: 
@@ -134,9 +151,3 @@ closefile:
     mov     eax, 6              ; invoke SYS_CLOSE (kernel opcode 6)
     int     80h                 ; call the kernel
     ret
-
-end: 
-
-    mov     ebx, 0
-    mov     eax, 1
-    int     80h

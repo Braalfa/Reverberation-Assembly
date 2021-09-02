@@ -4,21 +4,37 @@
 
 SECTION .data 
     alpha: dw 0000_0000_1000_0000b, 0h
-    alpha_inv: dw 0000_0010_0000_0000b, 0h
+    alpha_inv: dw 0, 0h
+    alpha_minus: dw 0, 0h
     k: dw 2500, 0h
 
 SECTION .text
 global  _start
  
 _start:
+
+updatek:
     push rax
     push r8
     mov eax, [k]
     mov r8, 2
     mul r8
     mov [k], eax
-    pop rax
     pop r8
+    pop rax
+
+calculateconstants:
+
+    mov r8d, 0000_0001_0000_0000b
+    mov r9d, [alpha]
+    call substraction
+    mov [alpha_minus], r15d
+
+    mov r8d, 0000_0001_0000_0000b
+    mov r9d, r15d
+    call division
+
+    mov [alpha_inv], r15d
 
 reverbexecution:
     call createoutputfile
@@ -63,11 +79,7 @@ reverb:
     cmp     r15, 0
     je     return 
 
-    mov r8d, 0000_0001_0000_0000b
-    mov r9d, [alpha]
-    call substraction
-
-    mov r8d, r15d    
+    mov r8d, [alpha_minus]    
     mov r9d, [input]
     call multiplication
     mov r10d, r15d

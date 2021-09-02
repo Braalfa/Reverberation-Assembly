@@ -1,9 +1,11 @@
 SECTION .data
     input dw 0000_0000_0000_0000b, 0h
-    output times 121000 dw 0, 0h  ; the contents to write
+    output dw 0000_0000_0000_0000b, 0h
 
-    outputfilename db 'output.wav', 0h    ; the filename to create
-    inputfilename db 'song.wav', 0h    ; the filename to create
+    buffer times 121000 dw 0, 0h  ; the contents to write
+
+    outputfilename db 'output2.wav', 0h    ; the filename to create
+    inputfilename db 'output.wav', 0h    ; the filename to create
 
 
 SECTION .text
@@ -122,7 +124,6 @@ openoutput:
 write:
     mov     edx, 2
     mov     ecx, output
-    add     ecx, r12d
     mov     ebx, ebx            ; move the file descriptor of the file we created into ebx
     mov     eax, 4              ; invoke SYS_WRITE (kernel opcode 4)
     int     80h                 ; call the kernel

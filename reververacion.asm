@@ -3,7 +3,8 @@
 %include        'filehandler.asm'                             ; include our external file
 
 SECTION .data 
-    alpha: dw 0000_0000_0111_1111b, 0h
+    alpha: dw 0000_0000_1000_0000b, 0h
+    alpha_inv: dw 0000_0010_0000_0000b, 0h
     doublek: dw 5000, 0h
 
 SECTION .text
@@ -31,7 +32,8 @@ _start:
 fillbuffer:
     call loadinputword ; se carga el input
     mov r8d, [input]
-    mov [output+r12d], r8d
+    mov [buffer+r12d], r8d
+    mov [output], r8d
     call saveoutputword
 
     add r14d, 2
@@ -40,12 +42,11 @@ fillbuffer:
     cmp r12d, [doublek]
     jl fillbuffer
 
+jmp reverbreduction
+
 reverb:
     call loadinputword ; se carga el input
-    mov r8, 2112 
-    mov r9, 0 
 
-    mov r8, 0
     mov r8d, 0000_0001_0000_0000b
     mov r9d, [alpha]
     call substraction
@@ -56,20 +57,48 @@ reverb:
     mov r10d, r15d
 
     mov r8d, [alpha]
-    mov r9d, [output+r13d]
+    mov r9d, [buffer+r13d]
     call multiplication
 
     mov r8, r10
     mov r9, r15
     call addition
 
-    mov [output+r12d], r15d
+    mov [output], r15d
+    mov [buffer+r12d], r15d
     call saveoutputword
 
     call updatebufferpointers
 
     add r14d, 2
     jmp reverb
+
+reverbreduction:
+    call loadinputword ; se carga el input
+    mov r8, [mask]
+a:
+    mov r8d, [alpha]
+    neg r8d
+    mov r9d, [buffer+r13d]
+    call multiplication
+b:
+    mov r8d, [input]
+    and r8d, [mask]
+    mov [buffer+r12d], r8d
+    mov r9d, r15d
+    call addition
+c:
+    mov r8d, [alpha_inv]
+    mov r9d, r15d
+    call multiplication
+d:
+    mov [output], r15d
+    call saveoutputword
+    call updatebufferpointers
+
+    add r14d, 2
+    jmp reverbreduction
+
 
 updatebufferpointers:
     add r13d, 2

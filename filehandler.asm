@@ -2,7 +2,7 @@ SECTION .data
     input dw 0000_0000_0000_0000b, 0h
     output dw 0000_0000_0000_0000b, 0h
 
-    buffer times 121000 dw 0, 0h  ; the contents to write
+    buffer times 2501 dw 0, 0h  ; the contents to write
 
     outputfilename db 'output1.wav', 0h    ; the filename to create
     inputfilename db 'input1.wav', 0h    ; the filename to create
@@ -58,7 +58,7 @@ loadinputword:
     cmp     eax, 0
     jne     continue 
     mov r15, 0
-    
+
 continue:
 
 

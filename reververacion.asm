@@ -5,13 +5,20 @@
 SECTION .data 
     alpha: dw 0000_0000_1000_0000b, 0h
     alpha_inv: dw 0000_0010_0000_0000b, 0h
-    doublek: dw 5000, 0h
+    k: dw 2500, 0h
 
 SECTION .text
 global  _start
  
 _start:
-
+    push rax
+    push r8
+    mov eax, [k]
+    mov r8, 2
+    mul r8
+    mov [k], eax
+    pop rax
+    pop r8
 
 reverbexecution:
     call createoutputfile
@@ -47,7 +54,7 @@ fillbuffer:
     add r14d, 2
     add r12d, 2
 
-    cmp r12d, [doublek]
+    cmp r12d, [k]
     jl fillbuffer
     ret
 
@@ -112,12 +119,12 @@ reverbreduction:
 
 updatebufferpointers:
     add r13d, 2
-    cmp r13d, [doublek]
+    cmp r13d, [k]
     jbe skip1
     mov r13, 0 
 skip1:
     add r12d, 2
-    cmp r12d, [doublek]
+    cmp r12d, [k]
     jbe skip2
     mov r12, 0 
 skip2:

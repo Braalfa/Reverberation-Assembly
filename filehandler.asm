@@ -2,7 +2,7 @@ SECTION .data
     input dw 0000_0000_0000_0000b, 0h
     output dw 0000_0000_0000_0000b, 0h
 
-    buffer times 2501 dw 0, 0h  ; se define el buffer
+    buffer times 12001 dw 0, 0h  ; se define el buffer
 
     outputfilename db 'output1.wav', 0h    ; se definen los nombres de archivos
     inputfilename db 'input1.wav', 0h   

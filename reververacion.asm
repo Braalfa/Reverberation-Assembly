@@ -2,11 +2,11 @@
 %include        'math.asm'                             ; include our external file
 %include        'filehandler.asm'                             ; include our external file
 
-SECTION .data 
-    alpha: dw 0000_0000_1000_0000b, 0h ; se define el alpha
+SECTION .data
+    alpha: dw 0000_0000_0110_0110b, 0h ; se define el alpha
     alpha_inv: dw 0, 0h ; espacio para almacenar alpha inverso
     alpha_minus: dw 0, 0h ; espacio para almacenar menos alfa
-    k: dw 2500, 0h
+    k: dw 12000, 0h
 
 SECTION .text
 global  _start

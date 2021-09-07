@@ -3,9 +3,9 @@
 %include        'filehandler.asm'                             ; include our external file
 
 SECTION .data 
-    alpha: dw 0000_0000_1000_0000b, 0h
-    alpha_inv: dw 0, 0h
-    alpha_minus: dw 0, 0h
+    alpha: dw 0000_0000_1000_0000b, 0h ; se define el alpha
+    alpha_inv: dw 0, 0h ; espacio para almacenar alpha inverso
+    alpha_minus: dw 0, 0h ; espacio para almacenar menos alfa
     k: dw 2500, 0h
 
 SECTION .text
@@ -13,7 +13,7 @@ global  _start
  
 _start:
 
-updatek:
+updatek: ; funcion para duplicar k dado que una palabra ocupa dos bytes
     push rax
     push r8
     mov eax, [k]
@@ -23,7 +23,7 @@ updatek:
     pop r8
     pop rax
 
-calculateconstants:
+calculateconstants: ; funcion para calcular las constantes de alpha
 
     mov r8d, 0000_0001_0000_0000b
     mov r9d, [alpha]
@@ -36,7 +36,7 @@ calculateconstants:
 
     mov [alpha_inv], r15d
 
-reverbexecution:
+reverbexecution: ; funcion para ejecutar el procesamiento de reverberacion
     call createoutputfile
     call copyheaders
     call initializeregisters
@@ -44,7 +44,7 @@ reverbexecution:
     call reverb
 
 
-reberbinverseexecution:
+reberbinverseexecution: ; funcion para ejecutar la reduccion de reverberacion
     call switchfile
     call createoutputfile
     call copyheaders
@@ -53,15 +53,15 @@ reberbinverseexecution:
     call reverbreduction
     jmp end
 
-initializeregisters:
+initializeregisters: ; se inicializan los registros de conteo
     mov r14, 44
     mov r12, 0
     mov r13, 0
     ret
 
 
-fillbuffer:
-    call loadinputword ; se carga el input
+fillbuffer: ; se llena el buffer y se copian los primeros datos
+    call loadinputword 
     mov r8d, [input]
     mov [buffer+r12d], r8d
     mov [output], r8d
@@ -74,8 +74,8 @@ fillbuffer:
     jl fillbuffer
     ret
 
-reverb:
-    call loadinputword ; se carga el input
+reverb: ; se realiza el procesamiento de reververacion
+    call loadinputword 
     cmp     r15, 0
     je     return 
 
@@ -101,8 +101,8 @@ reverb:
     add r14d, 2
     jmp reverb
 
-reverbreduction:
-    call loadinputword ; se carga el input
+reverbreduction: ; se realiza la reduccion de reverberacion
+    call loadinputword 
     cmp     r15, 0
     je     return 
 
@@ -129,7 +129,7 @@ reverbreduction:
     jmp reverbreduction
 
 
-updatebufferpointers:
+updatebufferpointers: ; funcion para actualizar los punteros del buffer
     add r13d, 2
     cmp r13d, [k]
     jbe skip1

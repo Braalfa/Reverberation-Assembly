@@ -2,17 +2,17 @@ SECTION .data
     input dw 0000_0000_0000_0000b, 0h
     output dw 0000_0000_0000_0000b, 0h
 
-    buffer times 2501 dw 0, 0h  ; the contents to write
+    buffer times 2501 dw 0, 0h  ; se define el buffer
 
-    outputfilename db 'output1.wav', 0h    ; the filename to create
-    inputfilename db 'input1.wav', 0h    ; the filename to create
-    outputfilename2 db 'output2.wav', 0h    ; the filename to create
-    inputfilename2 db 'input2.wav', 0h    ; the filename to create
+    outputfilename db 'output1.wav', 0h    ; se definen los nombres de archivos
+    inputfilename db 'input1.wav', 0h   
+    outputfilename2 db 'output2.wav', 0h   
+    inputfilename2 db 'input2.wav', 0h   
 
 
 SECTION .text
 
-switchfile:
+switchfile: ; funcion para cambiar entrada de input 1 a input 2
     push r8
     mov r8, [inputfilename2]
     mov [inputfilename], r8
@@ -21,8 +21,8 @@ switchfile:
     pop r8
     ret
 
-copyheaders:
-    push r14
+copyheaders: ; funcion para copiar los headers del archivo WAV
+    push r14 
     push r12
     push r8
 
@@ -43,7 +43,7 @@ headersloop:
     pop r14
     ret
 
-loadinputword:
+loadinputword: ; funcion para cargar una palabra de entrada
     push rdx
     push rcx
     push rbx
@@ -55,7 +55,7 @@ loadinputword:
     
     mov r15, 1
     
-    cmp     eax, 0
+    cmp     eax, 0 ; se compara cuando terminar
     jne     continue 
     mov r15, 0
 
@@ -70,7 +70,7 @@ continue:
     pop rdx
     ret
 
-saveoutputword:
+saveoutputword: ; funcion para guardar una palabra de salida
     push rdx
     push rcx
     push rbx
@@ -87,16 +87,16 @@ saveoutputword:
     pop rdx
     ret
 
-createoutputfile:
+createoutputfile: ; funcion para crear el archivo de salida
     push rdx
     push rcx
     push rbx
     push rax
 
-    mov     ecx, 0777o          ; set all permissions to read, write, execute
-    mov     ebx, outputfilename ; filename we will create
-    mov     eax, 8              ; invoke SYS_CREAT (kernel opcode 8)
-    int     80h                 ; call the kernel
+    mov     ecx, 0777o      
+    mov     ebx, outputfilename 
+    mov     eax, 8        
+    int     80h           
     
     call closefile
         
@@ -107,47 +107,47 @@ createoutputfile:
 
     ret 
 
-openinput: 
-    mov     ecx, 0              ; flag for readonly access mode (O_RDONLY)
-    mov     ebx, inputfilename  ; filename we created above
-    mov     eax, 5              ; invoke SYS_OPEN (kernel opcode 5)
-    int     80h                 ; call the kernel
+openinput: ; funcion para abir el archivo de entrada
+    mov     ecx, 0             
+    mov     ebx, inputfilename  
+    mov     eax, 5              
+    int     80h        
     ret
 
-updatefileposition:
-    mov     edx, 0          ; Put the reference position for the offset in the EDX register
-    mov     ecx, r14d             ; Put the offset value in the ECX register
-    mov     ebx, eax           ; move the opened file descriptor into EBX
-    mov     eax, 19            ; Put the system call sys_lseek () number 19, in the EAX register
-    int     80h                ; call the kernel
+updatefileposition: ; funcion para actualizar la posicion a leer/escribir
+    mov     edx, 0   
+    mov     ecx, r14d       
+    mov     ebx, eax       
+    mov     eax, 19           
+    int     80h                
     ret
 
-readinput:
-    mov     edx, 2             ; number of bytes to read - one for each letter of the file contents
-    mov     ecx, input          ; move the memory address of our file contents variable into ecx
-    mov     ebx, ebx            ; move the opened file descriptor into EBX
-    mov     eax, 3              ; invoke SYS_READ (kernel opcode 3)
-    int     80h                 ; call the kernel
+readinput: ; funcion para leer la entrada
+    mov     edx, 2      
+    mov     ecx, input    
+    mov     ebx, ebx    
+    mov     eax, 3   
+    int     80h         
 
     ret
 
-openoutput: 
-    mov     ecx, 1              ; flag for writeonly access mode
-    mov     ebx, outputfilename  ; filename we created above
-    mov     eax, 5              ; invoke SYS_OPEN (kernel opcode 5)
-    int     80h                 ; call the kernel
+openoutput: ; funcion para abrir el archivo de salida
+    mov     ecx, 1              
+    mov     ebx, outputfilename  
+    mov     eax, 5         
+    int     80h              
     ret
 
-write:
+write: ; funcion para escribir en la salida
     mov     edx, 2
     mov     ecx, output
-    mov     ebx, ebx            ; move the file descriptor of the file we created into ebx
-    mov     eax, 4              ; invoke SYS_WRITE (kernel opcode 4)
-    int     80h                 ; call the kernel
+    mov     ebx, ebx            
+    mov     eax, 4  
+    int     80h         
     ret 
 
-closefile:
-    mov     ebx, ebx            ; not needed but used to demonstrate that SYS_CLOSE takes a file descriptor from EBX
-    mov     eax, 6              ; invoke SYS_CLOSE (kernel opcode 6)
-    int     80h                 ; call the kernel
+closefile: ; funcion para cerrar el archivo
+    mov     ebx, ebx          
+    mov     eax, 6          
+    int     80h           
     ret

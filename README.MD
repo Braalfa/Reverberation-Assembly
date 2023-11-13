@@ -1,4 +1,8 @@
-### Herramientas Usadas:
+### Summary
+
+This is a project to add revervation to a wav audio file. It was developed in x86 assembly.
+
+### Tools used:
 
 * x86
 * NASM 
@@ -6,8 +10,8 @@
 * Python
 * Bash
 
-### Instrucciones de Uso:
+### Use instructions:
 
-Se ejecuta el sistema mediante la instruccion (desde terminal):
+Execute from the terminal:
 
 ./ejecutar.sh
